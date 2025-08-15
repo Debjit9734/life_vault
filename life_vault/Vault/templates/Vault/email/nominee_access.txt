@@ -1,0 +1,18 @@
+Dear {{ nominee.name }},
+
+{{ user.username }} has not logged in for over {{ timeout_str }}.
+
+Attached documents:
+{% for doc in documents %}
+- {{ doc.name }}
+{% endfor %}
+
+Assigned Vault Items:
+{% for item in vault_items %}
+- {{ item.name }} ({{ item.get_item_type_display }})
+{% endfor %}
+
+Please log in to your LifeVault account to access the vault items.
+
+Sincerely,
+The LifeVault Team

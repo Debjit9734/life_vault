@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Vault - Secure Account Creation</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            /* Color Variables */
+            --main-bg-color: #2C2C2E;
+            --card-bg-color: #3A3A3C;
+            --text-primary: #FFFFFF;
+            --text-secondary: #F2F2F7;
+            --text-tertiary: #A0A0A0;
+            --accent-blue: #007AFF;
+            --error-red: #CC4A4A;
+            --success-green: #4DCC4A;
+            
+            /* Neumorphic Shadows */
+            --neumorphic-light-shadow: rgba(255, 255, 255, 0.05);
+            --neumorphic-dark-shadow: rgba(0, 0, 0, 0.4);
+            --neumorphic-active-light: rgba(255, 255, 255, 0.03);
+            --neumorphic-active-dark: rgba(0, 0, 0, 0.5);
+            
+            /* Dimensions */
+            --border-radius-lg: 25px;
+            --border-radius-sm: 12px;
+            --transition-speed: 0.25s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Roboto', 'Segoe UI', sans-serif;
+            background-color: var(--main-bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .top-header {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 10;
+        }
+
+        .branding {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-blue), #0055cc);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                4px 4px 8px var(--neumorphic-dark-shadow),
+                -4px -4px 8px var(--neumorphic-light-shadow);
+        }
+
+        .brand-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+
+        .brand-name {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+        }
+
+        .security-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #4DCC4A, #2E8B57);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .security-icon svg {
+            width: 14px;
+            height: 14px;
+            fill: white;
+        }
+
+        /* Main Card */
+        .signup-card {
+            background-color: var(--card-bg-color);
+            border-radius: var(--border-radius-lg);
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 
+                12px 12px 24px var(--neumorphic-dark-shadow),
+                -12px -12px 24px var(--neumorphic-light-shadow);
+            transition: all var(--transition-speed) ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .signup-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, var(--accent-blue), #6e45e2);
+            border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+        }
+
+        .card-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card-subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-tertiary);
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        /* Form Styles */
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            padding-left: 5px;
+        }
+
+        .form-input {
+            background-color: var(--card-bg-color);
+            border: none;
+            border-radius: var(--border-radius-sm);
+            padding: 16px 20px;
+            font-size: 16px;
+            color: var(--text-primary);
+            box-shadow: 
+                inset 4px 4px 8px var(--neumorphic-dark-shadow),
+                inset -4px -4px 8px var(--neumorphic-light-shadow);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .form-input::placeholder {
+            color: #6C6C70;
+        }
+
+        .form-input:focus {
+            outline: none;
+            box-shadow: 
+                inset 4px 4px 8px var(--neumorphic-dark-shadow),
+                inset -4px -4px 8px var(--neumorphic-light-shadow),
+                0 0 0 2px var(--accent-blue);
+        }
+
+        .has-error .form-input {
+            box-shadow: 
+                inset 4px 4px 8px var(--neumorphic-dark-shadow),
+                inset -4px -4px 8px var(--neumorphic-light-shadow),
+                0 0 0 2px var(--error-red);
+        }
+
+        .error-message {
+            color: var(--error-red);
+            font-size: 13px;
+            padding-left: 5px;
+            height: 18px;
+            display: block;
+        }
+
+        /* Primary Button */
+        .btn-primary {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            padding: 18px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 
+                6px 6px 12px var(--neumorphic-dark-shadow),
+                -6px -6px 12px var(--neumorphic-light-shadow);
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                8px 8px 16px var(--neumorphic-dark-shadow),
+                -8px -8px 16px var(--neumorphic-light-shadow);
+        }
+
+        .btn-primary:active {
+            transform: translateY(1px);
+            box-shadow: 
+                2px 2px 4px var(--neumorphic-dark-shadow),
+                -2px -2px 4px var(--neumorphic-light-shadow);
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        /* Legal Text */
+        .legal-text {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin: 20px 0;
+            line-height: 1.5;
+        }
+
+        .text-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .text-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: var(--text-primary);
+            transition: width var(--transition-speed) ease;
+        }
+
+        .text-link:hover::after {
+            width: 100%;
+        }
+
+        /* OR Separator */
+        .or-separator {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+
+        .or-separator::before,
+        .or-separator::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #5A5A5E, transparent);
+        }
+
+        .or-separator span {
+            padding: 0 15px;
+        }
+
+        /* Social Login Buttons */
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background-color: var(--card-bg-color);
+            color: var(--text-primary);
+            border: none;
+            border-radius: var(--border-radius-sm);
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 
+                4px 4px 8px var(--neumorphic-dark-shadow),
+                -4px -4px 8px var(--neumorphic-light-shadow);
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                6px 6px 12px var(--neumorphic-dark-shadow),
+                -6px -6px 12px var(--neumorphic-light-shadow);
+        }
+
+        .social-btn:active {
+            transform: translateY(1px);
+            box-shadow: 
+                2px 2px 4px var(--neumorphic-dark-shadow),
+                -2px -2px 4px var(--neumorphic-light-shadow);
+        }
+
+        .social-icon {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Login Link */
+        .login-link-container {
+            text-align: center;
+            font-size: 15px;
+            color: var(--text-tertiary);
+        }
+
+        /* Password Strength Indicator */
+        .password-strength {
+            height: 4px;
+            background: #4A4A4E;
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .strength-meter {
+            height: 100%;
+            width: 0%;
+            background: var(--error-red);
+            transition: width 0.4s ease;
+            border-radius: 2px;
+        }
+
+        /* Security Animation */
+        .security-animation {
+            position: absolute;
+            bottom: -100px;
+            left: 0;
+            right: 0;
+            height: 200px;
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .hexagon {
+            position: absolute;
+            width: 20px;
+            height: 18px;
+            background: var(--accent-blue);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            opacity: 0.1;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-1000px) rotate(720deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .signup-card {
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+            
+            .top-header {
+                padding: 0 20px;
+                top: 20px;
+            }
+            
+            .brand-name {
+                font-size: 20px;
+            }
+            
+            .security-badge {
+                font-size: 12px;
+            }
+            
+            .card-title {
+                font-size: 28px;
+            }
+            
+            .form-input, .social-btn, .btn-primary {
+                padding: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-header {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .security-badge {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header with Branding -->
+    <header class="top-header">
+        <div class="branding">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12,1L3,5v6c0,5.55,3.84,10.74,9,12c5.16-1.26,9-6.45,9-12V5L12,1z M19,11c0,1.85-0.51,3.65-1.38,5.21l-1.45-1.45 c1.29-1.94,0.87-4.59-1.05-6c-0.62-0.46-1.33-0.74-2.07-0.84V7h-2v1.92c-0.74,0.1-1.45,0.38-2.07,0.84c-1.92,1.41-2.34,4.06-1.05,6 l-1.45,1.45C5.51,14.65,5,12.85,5,11V6.3l7-3.11l7,3.11V11z M12,15c-1.66,0-3-1.34-3-3s1.34-3,3-3s3,1.34,3,3S13.66,15,12,15z"/>
+                </svg>
+            </div>
+            <div class="brand-name">LifeVault</div>
+        </div>
+        <div class="security-badge">
+            <div class="security-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18,8h-1V6c0-2.76-2.24-5-5-5S7,3.24,7,6v2H6c-1.1,0-2,0.9-2,2v10c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V10 C20,8.9,19.1,8,18,8z M12,17c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S13.1,17,12,17z M9,8V6c0-1.66,1.34-3,3-3s3,1.34,3,3v2H9z"/>
+                </svg>
+            </div>
+            <span>Military-grade encryption</span>
+        </div>
+    </header>
+
+    <!-- Main Signup Card -->
+    <main class="signup-card">
+        <h1 class="card-title">Create Your Account</h1>
+        <p class="card-subtitle">Start your secure digital legacy today.</p>
+        
+        <!-- Signup Form -->
+        <!-- signup.html -->
+        <form class="signup-form" method="POST" action="{% url 'sign_up' %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_full_name" class="form-label">Full Name</label>
+                <input type="text" id="id_full_name" name="full_name" class="form-input" placeholder="Enter your full name" required>
+                {% if form.username.errors %}
+                    <span class="error-message">{{ form.username.errors.as_text }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_email" class="form-label">Email</label>
+                <input type="email" id="id_email" name="email" class="form-input" placeholder="Enter your email" required>
+                {% if form.email.errors %}
+                    <span class="error-message">{{ form.email.errors.as_text }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_password1" class="form-label">Password</label>
+                {{ form.password1 }}
+                <div class="password-strength">
+                    <div class="strength-meter" id="password-strength-meter"></div>
+                </div>
+                {% if form.password1.errors %}
+                    <span class="error-message">{{ form.password1.errors.as_text }}</span>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password2" class="form-label">Confirm Password</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <span class="error-message">{{ form.password2.errors.as_text }}</span>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="btn-primary">Sign Up</button>
+        </form>
+        
+        <p class="legal-text">By signing up, you agree to our <a href="#" class="text-link">Terms of Service</a> and <a href="#" class="text-link">Privacy Policy</a>.</p>
+        
+        <!-- OR Separator -->
+        <div class="or-separator">
+            <span>OR</span>
+        </div>
+        
+        <!-- Social Login -->
+        <div class="social-login">
+            <button class="social-btn">
+                <span class="social-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.05,13.81c1.57-0.59,2.75-2.06,2.75-3.81c0-2.22-1.78-4-4-4c-0.19,0-0.38,0.01-0.57,0.04 C14.3,3.67,13.18,3,12,3S9.7,3.67,8.77,4.55C8.38,4.52,8.19,4.5,8,4.5c-2.22,0-4,1.78-4,4c0,1.75,1.18,3.22,2.75,3.81 C5.88,14.75,5,16.24,5,18c0,2.76,2.24,5,5,5h8c2.76,0,5-2.24,5-5C19,16.24,18.12,14.75,17.05,13.81z M10,17l-3-3l1.41-1.41L10,14.17 l4.59-4.59L16,11L10,17z"/>
+                    </svg>
+                </span>
+                Sign Up with Apple
+            </button>
+            
+            <button class="social-btn">
+                <span class="social-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12.24,10.285V14.4h6.806c-0.275,1.765-2.056,5.174-6.806,5.174c-4.095,0-7.439-3.389-7.439-7.574 s3.345-7.574,7.439-7.574c2.33,0,3.891,0.989,4.785,1.849l3.254-3.138C18.189,1.186,15.479,0,12.24,0C5.76,0,0.5,5.28,0.5,12 s5.26,12,11.74,12c6.72,0,11.738-5.746,11.738-11.934c0-0.801-0.085-1.41-0.189-2.016H12.24z"/>
+                    </svg>
+                </span>
+                Sign Up with Google
+            </button>
+        </div>
+        
+        <p class="login-link-container">Already have an account? <a href="{% url 'login' %}" class="text-link">Log In</a></p>
+    </main>
+    
+    <!-- Security Animation -->
+    <div class="security-animation" id="security-animation"></div>
+    
+    <script>
+        // Generate floating hexagons for background animation
+        const animationContainer = document.getElementById('security-animation');
+        const colors = ['#007AFF', '#4DCC4A', '#F2F2F7'];
+        
+        for (let i = 0; i < 25; i++) {
+            const hexagon = document.createElement('div');
+            hexagon.className = 'hexagon';
+            hexagon.style.left = `${Math.random() * 100}%`;
+            hexagon.style.width = `${10 + Math.random() * 20}px`;
+            hexagon.style.height = `${8 + Math.random() * 16}px`;
+            hexagon.style.animationDelay = `${Math.random() * 15}s`;
+            hexagon.style.opacity = `${0.05 + Math.random() * 0.1}`;
+            hexagon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            animationContainer.appendChild(hexagon);
+        }
+        
+        // Password strength indicator
+        const passwordInput = document.getElementById('password-input');
+        const strengthMeter = document.getElementById('password-strength-meter');
+        
+        passwordInput.addEventListener('input', function() {
+            const password = passwordInput.value;
+            let strength = 0;
+            
+            if (password.length > 7) strength += 25;
+            if (/[A-Z]/.test(password)) strength += 25;
+            if (/[0-9]/.test(password)) strength += 25;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+            
+            strengthMeter.style.width = `${strength}%`;
+            strengthMeter.style.backgroundColor = strength < 50 ? 
+                'var(--error-red)' : strength < 75 ? 
+                '#FF9500' : 'var(--success-green)';
+        });
+        
+        // Password confirmation validation
+        const confirmPasswordInput = document.getElementById('confirm-password-input');
+        const passwordError = document.getElementById('confirm-password-error');
+        
+        confirmPasswordInput.addEventListener('input', function() {
+            if (confirmPasswordInput.value !== passwordInput.value && passwordInput.value.length > 0) {
+                passwordError.textContent = 'Passwords do not match';
+            } else {
+                passwordError.textContent = '';
+            }
+        });
+        
+        // Form submission simulation
+        document.querySelector('.signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simulate form processing
+            const submitButton = document.querySelector('.btn-primary');
+            const originalText = submitButton.textContent;
+            
+            submitButton.textContent = 'Securing account...';
+            submitButton.disabled = true;
+            
+            setTimeout(() => {
+                submitButton.textContent = 'Account Created!';
+                submitButton.style.backgroundColor = 'var(--success-green)';
+                
+                setTimeout(() => {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                    submitButton.style.backgroundColor = 'var(--accent-blue)';
+                }, 2000);
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeVault - Neumorphic Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-bg: #1a1a1a;
+            --card-bg: #2e2e2e;
+            --element-bg: #3a3a3a;
+            --text-color: #e0e0e0;
+            --accent-color: #7a6ff0;
+            --shadow-light: rgba(70, 70, 70, 0.2);
+            --shadow-dark: rgba(0, 0, 0, 0.4);
+            --inset-light: rgba(0, 0, 0, 0.3);
+            --inset-dark: rgba(70, 70, 70, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            padding: 20px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(40, 40, 40, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(40, 40, 40, 0.1) 0%, transparent 20%);
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 
+                10px 10px 20px var(--shadow-dark),
+                -10px -10px 20px var(--shadow-light);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), #9d94ff);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .login-header {
+            text-align: center;
+            padding-bottom: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            color: #f5f5f5;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(122, 111, 240, 0.7), transparent);
+        }
+
+        .content {
+            display: flex;
+            gap: 40px;
+        }
+
+        .form-container {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .brand {
+            color: #fff;
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(45deg, #a29bfe, #7a6ff0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b0b0b0;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding-left: 5px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px 20px;
+            background: var(--element-bg);
+            border: none;
+            border-radius: 16px;
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: var(--transition);
+            box-shadow: 
+                inset 4px 4px 8px var(--inset-light),
+                inset -4px -4px 8px var(--inset-dark);
+        }
+
+        .input-field::placeholder {
+            color: #777;
+        }
+
+        .input-field:focus {
+            outline: none;
+            box-shadow: 
+                inset 4px 4px 8px var(--inset-light),
+                inset -4px -4px 8px var(--inset-dark),
+                0 0 0 2px var(--accent-color);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: 0.5px;
+            text-align: center; /* Ensures text is centered */
+        }
+
+        /* Fixed display issues with anchor buttons */
+        a.btn {
+            display: block;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #7a6ff0, #9d94ff);
+            color: white;
+            box-shadow: 
+                5px 5px 10px var(--shadow-dark),
+                -5px -5px 10px var(--shadow-light);
+            margin-bottom: 25px;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 
+                inset 4px 4px 8px rgba(0, 0, 0, 0.3),
+                inset -4px -4px 8px rgba(122, 111, 240, 0.2);
+            transform: translateY(2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-color);
+            box-shadow: 
+                5px 5px 10px var(--shadow-dark),
+                -5px -5px 10px var(--shadow-light);
+            border: 1px solid #444;
+            /* Added to prevent text wrapping */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 
+                inset 4px 4px 8px var(--inset-light),
+                inset -4px -4px 8px var(--inset-dark);
+            transform: translateY(2px);
+            border-color: var(--accent-color);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+            color: #777;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #444, transparent);
+        }
+
+        .divider::before {
+            margin-right: 15px;
+        }
+
+        .divider::after {
+            margin-left: 15px;
+        }
+
+        .icon-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .lock-circle {
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--card-bg);
+            box-shadow: 
+                12px 12px 24px var(--shadow-dark),
+                -12px -12px 24px var(--shadow-light);
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .lock-circle:hover {
+            transform: scale(1.03);
+        }
+
+        .lock-icon {
+            font-size: 8rem;
+            color: #b0b0b0;
+            position: relative;
+            text-shadow: 
+                2px 2px 4px rgba(0, 0, 0, 0.3),
+                -2px -2px 4px rgba(100, 100, 100, 0.2);
+        }
+
+        .lock-icon::after {
+            content: '\f007';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -30%);
+            font-size: 2.5rem;
+            color: #888;
+        }
+
+        .hint {
+            text-align: center;
+            margin-top: 25px;
+            color: #888;
+            font-size: 0.9rem;
+            /* Added to prevent overlap */
+            padding-top: 10px;
+            clear: both;
+        }
+
+        .hint a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .hint a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .icon-container {
+                order: -1;
+                margin-bottom: 20px;
+            }
+            
+            .lock-circle {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .login-container {
+                padding: 30px 20px;
+            }
+            
+            .brand {
+                font-size: 2.4rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-header {
+                font-size: 2rem;
+            }
+            
+            .brand {
+                font-size: 2rem;
+            }
+            
+            .lock-circle {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .lock-icon {
+                font-size: 6rem;
+            }
+            
+            .lock-icon::after {
+                font-size: 2rem;
+            }
+
+            /* Better spacing for mobile */
+            .divider {
+                margin: 20px 0;
+            }
+            
+            .btn {
+                padding: 14px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Animation Effects */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .lock-circle {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1 class="login-header">Login</h1>
+        
+        <div class="content">
+            <div class="form-container">
+                <h1 class="brand">LifeVault</h1>
+                <form method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+
+                    <div class="input-group">
+                        <label for="username">Email</label>
+                        <input type="email" id="username" name="username" class="input-field" placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" class="input-field" placeholder="Enter your password">
+                    </div>
+                    
+                    <button class="btn btn-primary">Sign In</button>
+                    
+                    <div class="divider">or</div>
+                    
+                    <!-- Fixed: Proper anchor tag with correct closing -->
+                    <a href="{% url 'sign_up' %}" class="btn btn-secondary">Create Account</a>
+                    
+                    <p class="hint">Forgot your password? <a href="#">Reset it here</a></p>
+                </form>
+            </div>
+            
+            <div class="icon-container">
+                <div class="lock-circle">
+                    <i class="fas fa-lock lock-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add focus effect to input fields
+        const inputs = document.querySelectorAll('.input-field');
+        
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+        
+        // Add click effect to buttons
+        const buttons = document.querySelectorAll('.btn');
+        
+        buttons.forEach(button => {
+            button.addEventListener('mousedown', function() {
+                this.style.transform = 'translateY(4px)';
+            });
+            
+            button.addEventListener('mouseup', function() {
+                this.style.transform = 'translateY(0)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

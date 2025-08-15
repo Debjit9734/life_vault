@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Access - LifeVault</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Dark Neumorphic Colors */
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #222222;
+            --bg-tertiary: #2a2a2a;
+            --accent-primary: #5e9eff;
+            --accent-secondary: #7a6ff0;
+            --accent-hover: #4d8df0;
+            --text-primary: #f0f0f0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #7a7a7a;
+            --border-light: #333333;
+            --success: #34c759;
+            --error: #ff6b6b;
+            
+            /* Neumorphic Shadows */
+            --shadow-raised: 8px 8px 16px rgba(0, 0, 0, 0.5), 
+                            -6px -6px 16px rgba(60, 60, 60, 0.3);
+            --shadow-inset: inset 4px 4px 8px rgba(0, 0, 0, 0.5), 
+                            inset -4px -4px 8px rgba(60, 60, 60, 0.2);
+            --shadow-pressed: inset 6px 6px 12px rgba(0, 0, 0, 0.6), 
+                              inset -6px -6px 12px rgba(60, 60, 60, 0.1);
+            --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.4);
+            
+            /* Typography */
+            --font-heading: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Inter', 'Roboto', sans-serif;
+            --font-body: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter', 'Roboto', sans-serif;
+            
+            /* Dimensions */
+            --sidebar-width: 280px;
+            --border-radius: 14px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            background: radial-gradient(circle at center, #252525, #1a1a1a);
+        }
+
+        /* ====================== */
+        /* UPDATED SIDEBAR STYLES */
+        /* ====================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            padding: 30px 0;
+            height: 100vh;
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.4), 
+                       -6px -6px 16px rgba(255, 255, 255, 0.05);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            padding: 0 30px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0 20px;
+            flex-grow: 1;
+        }
+
+        .nav-links li {
+            margin-bottom: 8px;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            color: #b0b0b0;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            background: #3a3a3a;
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.4), 
+                       inset -4px -4px 8px rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .nav-links a.active {
+            background: #3a3a3a;
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.4), 
+                       inset -4px -4px 8px rgba(255, 255, 255, 0.05);
+            color: var(--accent-primary);
+        }
+
+        .nav-links i {
+            font-size: 1.2rem;
+            width: 30px;
+            margin-right: 12px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            transition: var(--transition);
+        }
+
+        /* Top Bar Styles */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: var(--bg-secondary);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-raised);
+            transition: var(--transition);
+        }
+
+        .mobile-toggle:hover {
+            box-shadow: var(--shadow-inset);
+        }
+
+        /* Page Content */
+        .page-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .nominee-name {
+            color: var(--accent-primary);
+        }
+
+        .instruction-text {
+            color: var(--text-tertiary);
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 16px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Search and Filter */
+        .search-filter-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .search-container {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: var(--bg-tertiary);
+            border: none;
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-size: 16px;
+            box-shadow: var(--shadow-inset);
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: var(--shadow-inset), 0 0 0 2px var(--accent-primary);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 12px 20px;
+            background: var(--bg-tertiary);
+            border: none;
+            border-radius: var(--border-radius);
+            color: var(--text-tertiary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: var(--shadow-raised);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .filter-btn.active {
+            background: rgba(94, 158, 255, 0.2);
+            color: var(--accent-primary);
+            box-shadow: var(--shadow-inset);
+        }
+
+        /* Items List */
+        .items-list-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .item-card {
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow-raised);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.4), 
+                        -8px -8px 16px rgba(70, 70, 70, 0.2);
+        }
+
+        /* Custom Checkbox */
+        .checkbox-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .item-checkbox {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .custom-checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            box-shadow: var(--shadow-inset);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .item-checkbox:checked ~ .custom-checkbox {
+            background: var(--accent-primary);
+            box-shadow: var(--shadow-inset);
+        }
+
+        .item-checkbox:checked ~ .custom-checkbox .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .check-icon {
+            width: 16px;
+            height: 16px;
+            fill: var(--text-primary);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.2s ease;
+        }
+
+        .item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(94, 158, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .item-icon i {
+            color: var(--accent-primary);
+            font-size: 18px;
+        }
+
+        .item-name {
+            font-size: 16px;
+            font-weight: 500;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), #7a6ff0);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-raised);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(94, 158, 255, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(1px);
+            box-shadow: var(--shadow-inset);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            box-shadow: var(--shadow-raised);
+        }
+
+        .btn-secondary:hover {
+            color: var(--text-primary);
+            box-shadow: var(--shadow-inset);
+        }
+
+        /* Security Indicator */
+        .encryption-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        /* Add form error styling */
+        .error-message {
+            color: var(--error);
+            font-size: 14px;
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        .section-title {
+            font-size: 22px;
+            margin: 30px 0 15px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .items-list-container {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+            
+            .sidebar {
+                width: 80px;
+            }
+            
+            .logo h1 {
+                display: none;
+            }
+            
+            .logo div {
+                justify-content: center;
+            }
+            
+            .logo i {
+                display: block !important;
+                font-size: 1.8rem;
+                margin: 0 auto !important;
+                color: var(--accent-primary) !important;
+                background: none !important;
+                -webkit-background-clip: unset !important;
+                background-clip: unset !important;
+                -webkit-text-fill-color: unset !important;
+            }
+            
+            .nav-links span {
+                display: none;
+            }
+            
+            .nav-links i {
+                margin-right: 0;
+                font-size: 1.4rem;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+            }
+            
+            .mobile-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .search-filter-bar {
+                flex-direction: column;
+            }
+            
+            .filter-options {
+                overflow-x: auto;
+                padding-bottom: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 16px;
+            }
+            
+            .items-list-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .sidebar {
+                width: 60px;
+            }
+            
+            .logo i {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Updated Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div style="display: flex; align-items: center;">
+                <i class="fas fa-shield-alt" style="
+                    font-size: 1.8rem;
+                    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    margin-right: 10px;
+                    min-width: 32px;
+                "></i>
+                <h1><span style="color: white;">Life</span><span style="
+                    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                ">Vault</span></h1>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{% url 'Dashbord2' %}"><i class="fas fa-home"></i> <span>Home</span></a></li>
+            <li><a href="{% url 'document' %}"><i class="fas fa-folder"></i> <span>Documents</span></a></li>
+            <li><a href="{% url 'nominee_setup' %}" class="active"><i class="fas fa-users"></i> <span>Nominees</span></a></li>
+            <li><a href="{% url 'security' %}"><i class="fas fa-shield-alt"></i> <span>Security</span></a></li>
+            <li><a href="{% url 'setting' %}"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+            <li style="margin-top: auto;"><a href="#" id="logoutLink"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="page-header">
+                <h1>Assign Access</h1>
+                <p>Grant specific permissions to your nominees</p>
+            </div>
+            <div class="encryption-badge">
+                <i class="fas fa-lock"></i>
+                <span>Military-grade encryption</span>
+            </div>
+            <button class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="page-content">
+            <h1 class="page-title">Assign Access to <span class="nominee-name">{{ nominee.name }}</span></h1>
+            <p class="instruction-text">Select the documents and secure vault items you wish to make accessible to this nominee.</p>
+
+            <!-- Display form errors -->
+            {% if form.errors %}
+                <div class="error-message">
+                    Please correct the errors below
+                </div>
+            {% endif %}
+
+            <!-- Item Selection Form -->
+            <form class="assignment-form" method="POST">
+                {% csrf_token %}
+                
+                <!-- Documents Section -->
+                <h2 class="section-title">Documents</h2>
+                <div class="items-list-container">
+                    {% if documents_exist %}
+                        {% for document in form.documents %}
+                            <div class="item-card">
+                                <label class="checkbox-container">
+                                    {{ document.tag }}
+                                    <span class="custom-checkbox">
+                                        <i class="fas fa-check check-icon"></i>
+                                    </span>
+                                </label>
+                                <div class="item-icon">
+                                    {% if ".pdf" in document.choice_label|lower %}
+                                        <i class="fas fa-file-pdf"></i>
+                                    {% elif ".jpg" in document.choice_label|lower or ".jpeg" in document.choice_label|lower or ".png" in document.choice_label|lower %}
+                                        <i class="fas fa-file-image"></i>
+                                    {% elif ".doc" in document.choice_label|lower or ".docx" in document.choice_label|lower %}
+                                        <i class="fas fa-file-word"></i>
+                                    {% else %}
+                                        <i class="fas fa-file"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="item-name">{{ document.choice_label }}</div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="instruction-text">No documents available to assign</p>
+                    {% endif %}
+                </div>
+
+                <!-- Secure Vault Items Section -->
+                <h2 class="section-title">Secure Vault Items</h2>
+                <div class="items-list-container">
+                    {% if vault_items_exist %}
+                        {% for item in form.vault_items %}
+                            <div class="item-card">
+                                <label class="checkbox-container">
+                                    {{ item.tag }}
+                                    <span class="custom-checkbox">
+                                        <i class="fas fa-check check-icon"></i>
+                                    </span>
+                                </label>
+                                <div class="item-icon">
+                                    {% if "password" in item.choice_label|lower %}
+                                        <i class="fas fa-key"></i>
+                                    {% elif "bank" in item.choice_label|lower or "atm" in item.choice_label|lower %}
+                                        <i class="fas fa-university"></i>
+                                    {% elif "crypto" in item.choice_label|lower %}
+                                        <i class="fab fa-bitcoin"></i>
+                                    {% elif "id" in item.choice_label|lower or "passport" in item.choice_label|lower %}
+                                        <i class="fas fa-id-card"></i>
+                                    {% else %}
+                                        <i class="fas fa-lock"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="item-name">{{ item.choice_label }}</div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="instruction-text">No vault items available to assign</p>
+                    {% endif %}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <a href="{% url 'nominee_setup' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Assignments
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Mobile sidebar toggle
+        const mobileToggle = document.querySelector('.mobile-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Toggle item selection on card click
+        document.querySelectorAll('.item-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                // Don't toggle if click was on the checkbox itself
+                if (e.target.closest('.checkbox-container')) return;
+                
+                const checkbox = this.querySelector('.item-checkbox');
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    checkbox.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+
+        // Update checkbox visual state
+        document.querySelectorAll('.item-checkbox').forEach(checkbox => {
+            // Initialize checked state
+            updateCheckboxState(checkbox);
+            
+            // Add change listener
+            checkbox.addEventListener('change', function() {
+                updateCheckboxState(this);
+            });
+        });
+
+        function updateCheckboxState(checkbox) {
+            const customCheckbox = checkbox.nextElementSibling;
+            if (checkbox.checked) {
+                customCheckbox.style.background = 'var(--accent-primary)';
+                customCheckbox.style.boxShadow = 'var(--shadow-inset)';
+            } else {
+                customCheckbox.style.background = 'var(--bg-secondary)';
+                customCheckbox.style.boxShadow = 'var(--shadow-inset)';
+            }
+        }
+
+        // Logout functionality
+        const logoutLink = document.getElementById('logoutLink');
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const confirmed = confirm('Are you sure you want to logout?');
+            if (confirmed) {
+                window.location.href = "{% url 'logout' %}";
+            }
+        });
+    </script>
+</body>
+</html>

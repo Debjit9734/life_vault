@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeVault - Manage Nominees</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Dark Neumorphic Colors */
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #222222;
+            --bg-tertiary: #2a2a2a;
+            --accent-primary: #5e9eff;
+            --accent-secondary: #7a6ff0;
+            --accent-hover: #4d8df0;
+            --text-primary: #f0f0f0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #7a7a7a;
+            --border-light: #333333;
+            --success: #34c759;
+            --error: #ff6b6b;
+            
+            /* Neumorphic Shadows */
+            --shadow-raised: 8px 8px 16px rgba(0, 0, 0, 0.5), 
+                            -6px -6px 16px rgba(60, 60, 60, 0.3);
+            --shadow-inset: inset 4px 4px 8px rgba(0, 0, 0, 0.5), 
+                            inset -4px -4px 8px rgba(60, 60, 60, 0.2);
+            --shadow-pressed: inset 6px 6px 12px rgba(0, 0, 0, 0.6), 
+                              inset -6px -6px 12px rgba(60, 60, 60, 0.1);
+            --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.4);
+            
+            /* Typography */
+            --font-heading: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Inter', 'Roboto', sans-serif;
+            --font-body: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter', 'Roboto', sans-serif;
+            
+            /* Dimensions */
+            --sidebar-width: 280px;
+            --border-radius: 14px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            background: radial-gradient(circle at center, #252525, #1a1a1a);
+        }
+
+        /* Updated sidebar styles to match document.html */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #222222;
+            padding: 30px 0;
+            height: 100vh;
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.4), 
+                       -6px -6px 16px rgba(255, 255, 255, 0.05);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            padding: 0 30px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0 20px;
+            flex-grow: 1;
+        }
+
+        .nav-links li {
+            margin-bottom: 8px;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            color: #b0b0b0;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            background: #3a3a3a;
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.4), 
+                       inset -4px -4px 8px rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .nav-links a.active {
+            background: #3a3a3a;
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.4), 
+                       inset -4px -4px 8px rgba(255, 255, 255, 0.05);
+            color: #5e9eff;
+        }
+
+        .nav-links i {
+            font-size: 1.2rem;
+            width: 30px;
+            margin-right: 12px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            transition: var(--transition);
+        }
+
+        /* Top Bar Styles */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: var(--bg-secondary);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-raised);
+            transition: var(--transition);
+        }
+
+        .mobile-toggle:hover {
+            box-shadow: var(--shadow-inset);
+        }
+
+        /* Add Nominee Section */
+        .add-nominee-section {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-raised);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title i {
+            color: var(--accent-primary);
+            margin-right: 12px;
+            background: rgba(94, 158, 255, 0.15);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-inset);
+        }
+
+        .nominee-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-tertiary);
+            border: none;
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 16px;
+            box-shadow: var(--shadow-inset);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            box-shadow: var(--shadow-inset), 0 0 0 2px var(--accent-primary);
+        }
+
+        .id-group {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 12px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--text-tertiary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(40, 40, 40, 0.3);
+            box-shadow: var(--shadow-inset);
+            grid-column: span 2;
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-primary);
+            background: rgba(94, 158, 255, 0.05);
+        }
+
+        .upload-area.drag-over {
+            border-color: var(--accent-primary);
+            background: rgba(94, 158, 255, 0.1);
+            box-shadow: var(--shadow-inset);
+        }
+
+        .upload-area i {
+            font-size: 32px;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .upload-area p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--accent-primary), #7a6ff0);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: var(--shadow-raised);
+            grid-column: span 2;
+            margin-top: 16px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(94, 158, 255, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(1px);
+            box-shadow: var(--shadow-inset);
+        }
+
+        /* Verification Message */
+        .verification-message {
+            background: rgba(52, 199, 89, 0.1);
+            border: 1px solid rgba(52, 199, 89, 0.3);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: var(--transition);
+            box-shadow: var(--shadow-inset);
+        }
+
+        .verification-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .verification-message i {
+            color: var(--success);
+            font-size: 20px;
+        }
+
+        .verification-message p {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+
+        .verification-message p strong {
+            color: var(--success);
+        }
+
+        /* Nominees List Section */
+        .nominees-list-section {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            box-shadow: var(--shadow-raised);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nominees-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            padding: 0 16px;
+            width: 300px;
+            box-shadow: var(--shadow-inset);
+        }
+
+        .search-bar i {
+            color: var(--text-tertiary);
+            margin-right: 8px;
+        }
+
+        .search-bar input {
+            background: none;
+            border: none;
+            outline: none;
+            width: 100%;
+            padding: 12px 0;
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .nominees-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .nominee-card {
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-raised);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nominee-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.4), 
+                        -8px -8px 16px rgba(70, 70, 70, 0.2);
+        }
+
+        .nominee-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .nominee-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 24px;
+            color: var(--accent-primary);
+            box-shadow: var(--shadow-raised);
+        }
+
+        .nominee-info h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .nominee-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .status-active {
+            background: rgba(52, 199, 89, 0.15);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(255, 204, 0, 0.15);
+            color: #ffcc00;
+        }
+
+        .nominee-details {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 16px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .nominee-actions {
+            display: flex;
+            gap: 12px;
+            opacity: 0;
+            transition: var(--transition);
+            margin-top: 16px;
+        }
+
+        .nominee-card:hover .nominee-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: none;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-raised);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-btn:active {
+            transform: translateY(1px);
+            box-shadow: var(--shadow-inset);
+        }
+
+        .edit-btn:hover {
+            background: rgba(94, 158, 255, 0.15);
+            color: var(--accent-primary);
+        }
+
+        .remove-btn:hover {
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--error);
+        }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.7;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: var(--text-tertiary);
+            margin-bottom: 24px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state p {
+            color: var(--text-tertiary);
+            max-width: 500px;
+            margin: 0 auto 24px;
+        }
+
+        /* Security Indicator */
+        .security-indicator {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            color: var(--accent-primary);
+            font-size: 18px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nominee-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .id-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .upload-area, .submit-btn {
+                grid-column: 1;
+            }
+            
+            /* Responsive sidebar styles from document.html */
+            .sidebar {
+                width: 80px;
+            }
+            
+            .logo h1 {
+                display: none;
+            }
+            
+            .logo div {
+                justify-content: center;
+            }
+            
+            .logo i {
+                display: block !important;
+                font-size: 1.8rem;
+                margin: 0 auto !important;
+                color: #5e9eff !important;
+                background: none !important;
+                -webkit-background-clip: unset !important;
+                background-clip: unset !important;
+                -webkit-text-fill-color: unset !important;
+            }
+            
+            .nav-links span {
+                display: none;
+            }
+            
+            .nav-links i {
+                margin-right: 0;
+                font-size: 1.4rem;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+            }
+            
+            .mobile-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .nominees-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .search-bar {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 16px;
+            }
+            
+            .add-nominee-section, .nominees-list-section {
+                padding: 24px 16px;
+            }
+            
+            .nominees-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                width: 60px;
+            }
+            
+            .logo i {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation - Updated to match document.html -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div style="display: flex; align-items: center;">
+                <i class="fas fa-shield-alt" style="
+                    font-size: 1.8rem;
+                    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    margin-right: 10px;
+                    min-width: 32px;
+                "></i>
+                <h1><span style="color: white;">Life</span><span style="
+                    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                ">Vault</span></h1>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{% url 'Dashbord2' %}"><i class="fas fa-home"></i> <span>Home</span></a></li>
+            <li><a href="{% url 'document' %}"><i class="fas fa-folder"></i> <span>Documents</span></a></li>
+            <li><a href="#" class="active"><i class="fas fa-users"></i> <span>Nominees</span></a></li>
+            <li><a href="{% url 'security' %}"><i class="fas fa-shield-alt"></i> <span>Security</span></a></li>
+            <li><a href="{% url 'setting' %}"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+            <li style="margin-top: auto;"><a href="#" id="logoutLink"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="page-header">
+                <h1>Manage Nominees</h1>
+                <p>Designate trusted individuals for your digital legacy</p>
+            </div>
+            <button class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Add Nominee Section -->
+        <section class="add-nominee-section">
+            <h2 class="section-title">
+                <i class="fas fa-user-plus"></i>
+                Add a New Nominee
+            </h2>
+            
+            <form class="nominee-form" method="POST" action="{% url 'nominee_setup' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">Nominee Name</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="error">{{ form.name.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Email Address</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="error">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.phone.id_for_label }}">Phone Number</label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}
+                        <div class="error">{{ form.phone.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="checkbox-group">
+                    {{ form.notifications }}
+                    <label for="{{ form.notifications.id_for_label }}">Receive Notifications</label>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-user-shield"></i>
+                    Add Nominee
+                </button>
+            </form>
+            
+            <!-- Form success message -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="verification-message show">
+                        <i class="fas fa-check-circle"></i>
+                        <p><strong>Success!</strong> {{ message }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </section>
+
+        <!-- Nominees List Section -->
+        <section class="nominees-list-section">
+            <div class="nominees-header">
+                <h2 class="section-title">
+                    <i class="fas fa-users"></i>
+                    Your Designated Nominees
+                </h2>
+                
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search nominees...">
+                </div>
+            </div>
+            
+            <div class="nominees-container">
+                {% for nominee in nominees %}
+                <div class="nominee-card">
+                    <div class="security-indicator">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    
+                    <div class="nominee-header">
+                        <div class="nominee-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="nominee-info">
+                            <h3>{{ nominee.name }}</h3>
+                            <span class="nominee-status {% if nominee.notifications %}status-active{% else %}status-inactive{% endif %}">
+                                {% if nominee.notifications %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <p class="nominee-details">{{ nominee.email }} · {{ nominee.phone }}</p>
+                    
+                    <div class="nominee-actions">
+                        <a href="{% url 'edit_nominee' nominee.id %}" class="action-btn edit-btn">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'delete_nominee' nominee.id %}" class="action-btn remove-btn">
+                            <i class="fas fa-trash-alt"></i> Remove
+                        </a>
+                        <a href="{% url 'assign_to_nominee' nominee.id %}" class="action-btn assign-btn">
+                            <i class="fas fa-lock"></i> Assign Access
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-users-slash"></i>
+                    <h3>No Nominees Added</h3>
+                    <p>Add trusted individuals to manage your digital legacy</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Mobile sidebar toggle
+        const mobileToggle = document.querySelector('.mobile-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Action buttons for nominees
+        const removeButtons = document.querySelectorAll('.remove-btn');
+        
+        removeButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if(!confirm('Are you sure you want to remove this nominee?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Add subtle glow to active elements
+        const activeItems = document.querySelectorAll('.active, .submit-btn, .action-btn');
+        activeItems.forEach(item => {
+            const glow = document.createElement('div');
+            glow.style.position = 'absolute';
+            glow.style.top = '0';
+            glow.style.left = '0';
+            glow.style.width = '100%';
+            glow.style.height = '100%';
+            glow.style.borderRadius = 'inherit';
+            glow.style.boxShadow = '0 0 15px rgba(94, 158, 255, 0.4)';
+            glow.style.opacity = '0';
+            glow.style.transition = 'opacity 0.3s';
+            glow.style.pointerEvents = 'none';
+            glow.style.zIndex = '-1';
+            item.appendChild(glow);
+            
+            item.addEventListener('mouseenter', () => {
+                glow.style.opacity = '1';
+            });
+            
+            item.addEventListener('mouseleave', () => {
+                glow.style.opacity = '0';
+            });
+        });
+
+        // Logout functionality
+        const logoutLink = document.getElementById('logoutLink');
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const confirmed = confirm('Are you sure you want to logout?');
+            if (confirmed) {
+                window.location.href = "{% url 'logout' %}";
+            }
+        });
+    </script>
+</body>
+</html>

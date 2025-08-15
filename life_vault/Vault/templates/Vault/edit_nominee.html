@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeVault - Edit Nominee</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Dark Neumorphic Colors */
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #222222;
+            --bg-tertiary: #2a2a2a;
+            --accent-primary: #5e9eff;
+            --accent-secondary: #7a6ff0;
+            --accent-hover: #4d8df0;
+            --text-primary: #f0f0f0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #7a7a7a;
+            --border-light: #333333;
+            --success: #34c759;
+            --error: #ff6b6b;
+            
+            /* Neumorphic Shadows */
+            --shadow-raised: 8px 8px 16px rgba(0, 0, 0, 0.5), 
+                            -6px -6px 16px rgba(60, 60, 60, 0.3);
+            --shadow-inset: inset 4px 4px 8px rgba(0, 0, 0, 0.5), 
+                            inset -4px -4px 8px rgba(60, 60, 60, 0.2);
+            --shadow-pressed: inset 6px 6px 12px rgba(0, 0, 0, 0.6), 
+                              inset -6px -6px 12px rgba(60, 60, 60, 0.1);
+            --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.4);
+            
+            /* Typography */
+            --font-heading: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Inter', 'Roboto', sans-serif;
+            --font-body: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter', 'Roboto', sans-serif;
+            
+            /* Dimensions */
+            --sidebar-width: 280px;
+            --border-radius: 14px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            background: radial-gradient(circle at center, #252525, #1a1a1a);
+        }
+
+        /* ====================== */
+        /* UPDATED SIDEBAR STYLES */
+        /* ====================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            padding: 30px 0;
+            height: 100vh;
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.4), 
+                       -6px -6px 16px rgba(255, 255, 255, 0.05);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            padding: 0 30px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0 20px;
+            flex-grow: 1;
+        }
+
+        .nav-links li {
+            margin-bottom: 8px;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            color: #b0b0b0;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            background: #3a3a3a;
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.4), 
+                       inset -4px -4px 8px rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .nav-links a.active {
+            background: #3a3a3a;
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.4), 
+                       inset -4px -4px 8px rgba(255, 255, 255, 0.05);
+            color: var(--accent-primary);
+        }
+
+        .nav-links i {
+            font-size: 1.2rem;
+            width: 30px;
+            margin-right: 12px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            transition: var(--transition);
+        }
+
+        /* Top Bar Styles */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: var(--bg-secondary);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-raised);
+            transition: var(--transition);
+        }
+
+        .mobile-toggle:hover {
+            box-shadow: var(--shadow-inset);
+        }
+
+        /* Edit Nominee Section */
+        .edit-nominee-section {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: var(--shadow-raised);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title i {
+            color: var(--accent-primary);
+            margin-right: 12px;
+            background: rgba(94, 158, 255, 0.15);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-inset);
+        }
+
+        .nominee-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-tertiary);
+            border: none;
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 16px;
+            box-shadow: var(--shadow-inset);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            box-shadow: var(--shadow-inset), 0 0 0 2px var(--accent-primary);
+        }
+
+        .error {
+            color: var(--error);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .id-group {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            grid-column: span 2;
+        }
+
+        .checkbox-group input {
+            margin-right: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            grid-column: span 2;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px 32px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: var(--shadow-raised);
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), #7a6ff0);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(94, 158, 255, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: var(--shadow-inset);
+        }
+
+        /* Verification Message */
+        .verification-message {
+            background: rgba(52, 199, 89, 0.1);
+            border: 1px solid rgba(52, 199, 89, 0.3);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: var(--transition);
+            box-shadow: var(--shadow-inset);
+        }
+
+        .verification-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .verification-message i {
+            color: var(--success);
+            font-size: 20px;
+        }
+
+        .verification-message p {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+
+        .verification-message p strong {
+            color: var(--success);
+        }
+
+        /* Nominee Preview Card */
+        .nominee-preview {
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-top: 30px;
+            box-shadow: var(--shadow-inset);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 15px;
+        }
+
+        .preview-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .preview-body {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .preview-item {
+            margin-bottom: 15px;
+        }
+
+        .preview-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .preview-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .preview-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .status-active {
+            background: rgba(52, 199, 89, 0.15);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--error);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nominee-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .id-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .upload-area, .action-buttons {
+                grid-column: 1;
+            }
+            
+            .sidebar {
+                width: 80px;
+            }
+            
+            .logo h1 {
+                display: none;
+            }
+            
+            .logo div {
+                justify-content: center;
+            }
+            
+            .logo i {
+                display: block !important;
+                font-size: 1.8rem;
+                margin: 0 auto !important;
+                color: var(--accent-primary) !important;
+                background: none !important;
+                -webkit-background-clip: unset !important;
+                background-clip: unset !important;
+                -webkit-text-fill-color: unset !important;
+            }
+            
+            .nav-links span {
+                display: none;
+            }
+            
+            .nav-links i {
+                margin-right: 0;
+                font-size: 1.4rem;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+            }
+            
+            .mobile-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 16px;
+            }
+            
+            .edit-nominee-section {
+                padding: 24px 16px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 60px;
+            }
+            
+            .logo i {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Updated Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div style="display: flex; align-items: center;">
+                <i class="fas fa-shield-alt" style="
+                    font-size: 1.8rem;
+                    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    margin-right: 10px;
+                    min-width: 32px;
+                "></i>
+                <h1><span style="color: white;">Life</span><span style="
+                    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                ">Vault</span></h1>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{% url 'Dashbord2' %}"><i class="fas fa-home"></i> <span>Home</span></a></li>
+            <li><a href="{% url 'document' %}"><i class="fas fa-folder"></i> <span>Documents</span></a></li>
+            <li><a href="{% url 'nominee_setup' %}" class="active"><i class="fas fa-users"></i> <span>Nominees</span></a></li>
+            <li><a href="{% url 'security' %}"><i class="fas fa-shield-alt"></i> <span>Security</span></a></li>
+            <li><a href="{% url 'setting' %}"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+            <li style="margin-top: auto;"><a href="#" id="logoutLink"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="page-header">
+                <h1>Edit Nominee</h1>
+                <p>Update nominee information for your digital legacy</p>
+            </div>
+            <button class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Edit Nominee Section -->
+        <section class="edit-nominee-section">
+            <h2 class="section-title">
+                <i class="fas fa-user-edit"></i>
+                Edit Nominee: {{ nominee.name }}
+            </h2>
+            
+            <form class="nominee-form" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">Nominee Name</label>
+                    <input type="text" id="{{ form.name.id_for_label }}" name="{{ form.name.name }}" 
+                           class="form-control" value="{{ form.name.value }}" placeholder="Full name">
+                    {% if form.name.errors %}
+                        <div class="error">{{ form.name.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Email Address</label>
+                    <input type="email" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" 
+                           class="form-control" value="{{ form.email.value }}" placeholder="email@example.com">
+                    {% if form.email.errors %}
+                        <div class="error">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.phone.id_for_label }}">Phone Number</label>
+                    <input type="tel" id="{{ form.phone.id_for_label }}" name="{{ form.phone.name }}" 
+                           class="form-control" value="{{ form.phone.value }}" placeholder="+1 (123) 456-7890">
+                    {% if form.phone.errors %}
+                        <div class="error">{{ form.phone.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="{{ form.notifications.id_for_label }}" 
+                           name="{{ form.notifications.name }}" {% if form.notifications.value %}checked{% endif %}>
+                    <label for="{{ form.notifications.id_for_label }}">Receive Notifications</label>
+                </div>
+                
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Changes
+                    </button>
+                    <a href="{% url 'nominee_setup' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                </div>
+            </form>
+            
+            <!-- Form success message -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="verification-message show">
+                        <i class="fas fa-check-circle"></i>
+                        <p><strong>Success!</strong> {{ message }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <!-- Nominee Preview -->
+            <div class="nominee-preview">
+                <div class="preview-header">
+                    <h3><i class="fas fa-user-circle"></i> Nominee Preview</h3>
+                </div>
+                <div class="preview-body">
+                    <div class="preview-item">
+                        <div class="preview-label">Name</div>
+                        <div class="preview-value" id="preview-name">{{ nominee.name }}</div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Email</div>
+                        <div class="preview-value" id="preview-email">{{ nominee.email }}</div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Phone</div>
+                        <div class="preview-value" id="preview-phone">{{ nominee.phone }}</div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Status</div>
+                        <div>
+                            <span class="preview-status {% if nominee.notifications %}status-active{% else %}status-inactive{% endif %}" 
+                                  id="preview-status">
+                                {% if nominee.notifications %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Mobile sidebar toggle
+        const mobileToggle = document.querySelector('.mobile-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Live preview update
+        const nameInput = document.getElementById('{{ form.name.id_for_label }}');
+        const emailInput = document.getElementById('{{ form.email.id_for_label }}');
+        const phoneInput = document.getElementById('{{ form.phone.id_for_label }}');
+        const notifyCheckbox = document.getElementById('{{ form.notifications.id_for_label }}');
+        
+        const previewName = document.getElementById('preview-name');
+        const previewEmail = document.getElementById('preview-email');
+        const previewPhone = document.getElementById('preview-phone');
+        const previewStatus = document.getElementById('preview-status');
+        
+        function updatePreview() {
+            previewName.textContent = nameInput.value || '{{ nominee.name }}';
+            previewEmail.textContent = emailInput.value || '{{ nominee.email }}';
+            previewPhone.textContent = phoneInput.value || '{{ nominee.phone }}';
+            
+            if (notifyCheckbox.checked) {
+                previewStatus.textContent = 'Active';
+                previewStatus.className = 'preview-status status-active';
+            } else {
+                previewStatus.textContent = 'Inactive';
+                previewStatus.className = 'preview-status status-inactive';
+            }
+        }
+        
+        nameInput.addEventListener('input', updatePreview);
+        emailInput.addEventListener('input', updatePreview);
+        phoneInput.addEventListener('input', updatePreview);
+        notifyCheckbox.addEventListener('change', updatePreview);
+        
+        // Initialize preview
+        updatePreview();
+        
+        // Logout functionality
+        const logoutLink = document.getElementById('logoutLink');
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const confirmed = confirm('Are you sure you want to logout?');
+            if (confirmed) {
+                window.location.href = "{% url 'logout' %}";
+            }
+        });
+    </script>
+</body>
+</html>

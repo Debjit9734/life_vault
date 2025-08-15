@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeVault - Documents & Secure Vault</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Dark Neumorphic Color Palette */
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #222222;
+            --bg-tertiary: #2a2a2a;
+            --accent-primary: #5e9eff;
+            --accent-secondary: #7a6ff0;
+            --accent-hover: #4d8df0;
+            --text-primary: #f0f0f0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #7a7a7a;
+            --border-light: #333333;
+            --success: #34C759;
+            
+            /* Neumorphic Shadows */
+            --shadow-raised: 8px 8px 16px rgba(0, 0, 0, 0.5), 
+                            -6px -6px 16px rgba(60, 60, 60, 0.3);
+            --shadow-inset: inset 4px 4px 8px rgba(0, 0, 0, 0.5), 
+                            inset -4px -4px 8px rgba(60, 60, 60, 0.2);
+            --shadow-pressed: inset 6px 6px 12px rgba(0, 0, 0, 0.6), 
+                              inset -6px -6px 12px rgba(60, 60, 60, 0.1);
+            --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.4);
+            
+            /* Typography */
+            --font-heading: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Inter', 'Roboto', sans-serif;
+            --font-body: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter', 'Roboto', sans-serif;
+            
+            /* Dimensions */
+            --sidebar-width: 280px;
+            --border-radius: 14px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            background: radial-gradient(circle at center, #252525, #1a1a1a);
+        }
+
+        /* Updated sidebar styles to match dashboard */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #222222;
+            padding: 30px 0;
+            height: 100vh;
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.4), 
+                       -6px -6px 16px rgba(255, 255, 255, 0.05);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            padding: 0 30px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0 20px;
+            flex-grow: 1;
+        }
+
+        .nav-links li {
+            margin-bottom: 8px;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            color: #b0b0b0;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            background: #3a3a3a;
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.4), 
+                       inset -4px -4px 8px rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .nav-links a.active {
+            background: #3a3a3a;
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.4), 
+                       inset -4px -4px 8px rgba(255, 255, 255, 0.05);
+            color: #5e9eff;
+        }
+
+        .nav-links i {
+            font-size: 1.2rem;
+            width: 30px;
+            margin-right: 12px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            transition: var(--transition);
+        }
+
+        /* Top Bar Styles */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-title h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-title p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: var(--bg-secondary);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-raised);
+            transition: var(--transition);
+        }
+
+        .mobile-toggle:hover {
+            box-shadow: var(--shadow-inset);
+        }
+
+        /* Upload/Create Section */
+        .upload-create-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            padding: 24px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-raised);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.4), 
+                        -8px -8px 16px rgba(70, 70, 70, 0.2);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* File Upload Zone */
+        .file-upload-zone {
+            border: 2px dashed var(--text-tertiary);
+            border-radius: var(--border-radius);
+            padding: 32px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(40, 40, 40, 0.3);
+            box-shadow: var(--shadow-inset);
+        }
+
+        .file-upload-zone:hover {
+            border-color: var(--accent-primary);
+            background: rgba(94, 158, 255, 0.05);
+        }
+
+        .file-upload-zone.drag-over {
+            border-color: var(--accent-primary);
+            background: rgba(94, 158, 255, 0.1);
+            box-shadow: var(--shadow-inset);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .upload-text {
+            margin-bottom: 16px;
+        }
+
+        .upload-text h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .upload-text p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .browse-btn {
+            background: var(--bg-tertiary);
+            border: none;
+            color: var(--text-primary);
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-raised);
+        }
+
+        .browse-btn:hover {
+            background: var(--accent-primary);
+            color: white;
+            box-shadow: var(--shadow-inset);
+        }
+
+        /* Secure Vault Creation */
+        .secure-note-creation {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .secure-description {
+            margin-bottom: 24px;
+            flex-grow: 1;
+        }
+
+        .secure-description p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-size: 15px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .secure-types {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .type-item {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            text-align: center;
+            color: var(--text-secondary);
+            box-shadow: var(--shadow-inset);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .add-vault-btn {
+            background: linear-gradient(135deg, var(--accent-primary), #7a6ff0);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-raised);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .add-vault-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(94, 158, 255, 0.3);
+        }
+
+        .add-vault-btn:active {
+            transform: translateY(1px);
+            box-shadow: var(--shadow-inset);
+        }
+
+        /* Stored Items Section */
+        .stored-items-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .filter-tabs {
+            display: flex;
+            background: var(--bg-tertiary);
+            border-radius: 100px;
+            padding: 4px;
+            box-shadow: var(--shadow-inset);
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .filter-tab.active {
+            background: var(--accent-primary);
+            box-shadow: var(--shadow-raised);
+            color: white;
+        }
+
+        .sort-dropdown {
+            position: relative;
+        }
+
+        .sort-button {
+            background: var(--bg-tertiary);
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-raised);
+        }
+
+        .sort-button:hover {
+            background: var(--bg-secondary);
+            box-shadow: var(--shadow-inset);
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            padding: 8px 16px;
+            width: 240px;
+            box-shadow: var(--shadow-inset);
+        }
+
+        .search-bar i {
+            color: var(--text-tertiary);
+            margin-right: 8px;
+        }
+
+        .search-bar input {
+            background: none;
+            border: none;
+            outline: none;
+            width: 100%;
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        /* Items Container */
+        .items-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .item-card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-raised);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.4), 
+                        -8px -8px 16px rgba(70, 70, 70, 0.2);
+        }
+
+        .item-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .item-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: var(--accent-primary);
+            font-size: 18px;
+            box-shadow: var(--shadow-raised);
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .item-type {
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .item-date {
+            color: var(--text-tertiary);
+            font-size: 12px;
+            margin-top: 8px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .item-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .item-card:hover .item-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            box-shadow: var(--shadow-raised);
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-inset);
+        }
+
+        .edit-btn:hover {
+            color: var(--accent-primary);
+        }
+
+        .delete-btn:hover {
+            color: #ff6b6b;
+        }
+
+        /* Vault Item Specific Styles */
+        .vault-item .item-icon {
+            background: rgba(94, 158, 255, 0.15);
+            color: var(--accent-primary);
+        }
+
+        .vault-item .item-name {
+            color: var(--accent-primary);
+        }
+
+        .vault-item .item-type {
+            color: var(--accent-primary);
+        }
+
+        .secure-badge {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(94, 158, 255, 0.15);
+            color: var(--accent-primary);
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: var(--shadow-inset);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .upload-create-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                width: 80px;
+            }
+            
+            .logo h1 {
+                display: none;
+            }
+            
+            .logo div {
+                justify-content: center;
+            }
+            
+            .logo i {
+                display: block !important;
+                font-size: 1.8rem;
+                margin: 0 auto !important;
+                color: #5e9eff !important;
+                background: none !important;
+                -webkit-background-clip: unset !important;
+                background-clip: unset !important;
+                -webkit-text-fill-color: unset !important;
+            }
+            
+            .nav-links span {
+                display: none;
+            }
+            
+            .nav-links i {
+                margin-right: 0;
+                font-size: 1.4rem;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+            }
+            
+            .mobile-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .stored-items-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .filter-controls {
+                width: 100%;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+            
+            .search-bar {
+                width: 100%;
+                margin-top: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 16px;
+            }
+            
+            .secure-types {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-tabs {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            
+            .sidebar {
+                width: 60px;
+            }
+            
+            .logo i {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div style="display: flex; align-items: center;">
+                <i class="fas fa-shield-alt" style="
+                    font-size: 1.8rem;
+                    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    margin-right: 10px;
+                    min-width: 32px;
+                "></i>
+                <h1><span style="color: white;">Life</span><span style="
+                    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                ">Vault</span></h1>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{% url "Dashbord2" %}"><i class="fas fa-home"></i> <span>Home</span></a></li>
+            <li><a href="#" class="active"><i class="fas fa-folder"></i> <span>Documents</span></a></li>
+            <li><a href="{% url "nominee_setup" %}"><i class="fas fa-users"></i> <span>Nominees</span></a></li>
+            <li><a href="{% url "security" %}"><i class="fas fa-shield-alt"></i> <span>Security</span></a></li>
+            <li><a href="{% url "setting" %}"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+            <li style="margin-top: auto;"><a href="#" id="logoutLink"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="page-title">
+                <h1>Documents & Secure Vault</h1>
+                <p>Securely store your files and sensitive information</p>
+            </div>
+            <button class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Upload/Create Section -->
+        <section class="upload-create-section">
+            <!-- File Upload Area -->
+            <div class="card">
+                <div class="section-title">Upload Files</div>
+                <form method="post" action="{% url 'document' %}" enctype="multipart/form-data" id="uploadForm">
+                    {% csrf_token %}
+                    <input type="file" name="file" id="fileInput"  style="display: none;">
+                <div class="file-upload-zone" id="fileUploadZone">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">
+                        <h3>Drag & Drop Files Here</h3>
+                        <p>or click to upload (PDFs, Images, Word Documents etc.)</p>
+                    </div>
+                    
+                    <button type="button" class="browse-btn" id="browseBtn">
+                        <i class="fas fa-folder-open"></i>Browse Files</button>
+                </div>
+                </form>
+            </div>
+
+            <!-- Secure Vault Entry -->
+            <div class="card secure-note-creation">
+                <div class="section-title">Secure Vault</div>
+                <div class="secure-description">
+                    <p>Store confidential details securely with military-grade encryption</p>
+                    <div class="secure-types">
+                        <div class="type-item">IDs & Passports</div>
+                        <div class="type-item">Passwords</div>
+                        <div class="type-item">Crypto Wallets</div>
+                        <div class="type-item">Bank Details</div>
+                    </div>
+                </div>
+                <a href="{%url 'secure' %}" class="add-vault-btn">
+                    <i class="fas fa-lock"></i>
+                    Add New Secure Item
+                </a>
+            </div>
+        </section>
+
+        <!-- Stored Items Section -->
+        <section class="stored-items">
+            <div class="stored-items-header">
+                <div class="section-title">Your Digital Assets</div>
+                <div class="filter-controls">
+                    <div class="filter-tabs">
+                        <div class="filter-tab active">All</div>
+                        <div class="filter-tab">Documents</div>
+                        <div class="filter-tab">Images</div>
+                        <div class="filter-tab">Vault</div>
+                    </div>
+                    <div class="sort-dropdown">
+                        <button class="sort-button">
+                            Date Added <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search items...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="items-container">
+                <!-- Document Items -->
+                {% for file in files %}
+                <div class="item-card">
+                    <div class="item-header">
+                        <div class="item-icon">
+                            {% if file.file_type == 'pdf' %}
+                            <i class="fas fa-file-pdf"></i>
+                            {% elif file.file_type == '.doc' or file.file_type == '.docx' %}
+                            <i class="fas fa-file-word"></i>
+                            {% elif file.file_type == '.xls' or file.file_type == '.xlsx' %}
+                            <i class="fas fa-file-excel"></i>
+                            {% elif file.file_type == '.jpg' or file.file_type == '.png' %}
+                            <i class="fas fa-image"></i>
+                            {% else %} 
+                            <i class="fas fa-file"></i>
+                            {% endif %}
+                        </div>
+                        <div class="item-details">
+                            <div class="item-name">{{ file.file.name }}</div>
+                            <div class="item-type">{{ file.file_type|upper }} Document - {{ file.file_size }}</div>
+                        </div>
+                    </div>
+                    <div class="item-date">Uploaded: {{ file.uploaded_at|date:"M d, Y" }}</div>
+                    <div class="item-actions">
+                        <a href="{{ file.file.url }}" class="action-btn" download>
+                            <i class="fas fa-download"></i>
+                        </a>
+                        <a href="{% url 'delete_file' file.id %}" class="action-btn delete-btn">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Mobile sidebar toggle
+        const mobileToggle = document.querySelector('.mobile-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // File upload zone interaction
+        const fileUploadZone = document.getElementById('fileUploadZone');
+        const fileInput = document.querySelector('input[type="file"]');
+        const browseBtn = document.getElementById('browseBtn');
+        const uploadForm = document.getElementById('uploadForm');
+
+        // Trigger file input when browse button is clicked
+        browseBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // Trigger file input when upload zone is clicked
+        fileUploadZone.addEventListener('click', (e) => {
+            if (e.target !== browseBtn) {
+                fileInput.click();
+            }
+        });
+        
+        // Handle file input change
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                uploadForm.submit();
+            }
+        });
+        
+        fileUploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadZone.classList.add('drag-over');
+        });
+        
+        fileUploadZone.addEventListener('dragleave', () => {
+            fileUploadZone.classList.remove('drag-over');
+        });
+        
+        fileUploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadZone.classList.remove('drag-over');
+            // Handle file drop
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                uploadForm.submit();
+            }
+            alert('Files ready to upload!');
+        });
+        
+        fileUploadZone.addEventListener('click', () => {
+            // Trigger file input
+            //alert('File browser opened!');
+        });
+
+        // Filter tabs functionality
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // Action buttons
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        
+        editButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                alert('Edit functionality would open here');
+            });
+        });
+        
+        deleteButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault(); // ⬅️ Prevent the link from triggering
+        e.stopPropagation(); // ⬅️ Stop bubbling
+
+        const confirmed = confirm('Are you sure you want to delete this item?');
+        if (confirmed) {
+            // Proceed with deletion by navigating to the href manually
+            window.location.href = btn.getAttribute('href');
+            }
+        });
+    });
+
+        // Vault creation button
+        const vaultBtn = document.querySelector('.add-vault-btn');
+        vaultBtn.addEventListener('click', () => {
+            alert('Secure vault creation modal would open');
+        });
+
+        // Add subtle glow to active elements
+        const activeItems = document.querySelectorAll('.active, .add-vault-btn');
+        activeItems.forEach(item => {
+            const glow = document.createElement('div');
+            glow.style.position = 'absolute';
+            glow.style.top = '0';
+            glow.style.left = '0';
+            glow.style.width = '100%';
+            glow.style.height = '100%';
+            glow.style.borderRadius = 'inherit';
+            glow.style.boxShadow = '0 0 15px rgba(94, 158, 255, 0.4)';
+            glow.style.opacity = '0';
+            glow.style.transition = 'opacity 0.3s';
+            glow.style.pointerEvents = 'none';
+            glow.style.zIndex = '-1';
+            item.appendChild(glow);
+            
+            item.addEventListener('mouseenter', () => {
+                glow.style.opacity = '1';
+            });
+            
+            item.addEventListener('mouseleave', () => {
+                glow.style.opacity = '0';
+            });
+        });
+
+        // Logout functionality
+        const logoutLink = document.getElementById('logoutLink');
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const confirmed = confirm('Are you sure you want to logout?');
+            if (confirmed) {
+                window.location.href = "{% url 'logout' %}";
+            }
+        });
+    </script>
+</body>
+</html>

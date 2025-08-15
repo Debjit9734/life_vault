@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Access to {{ user.username }}'s LifeVault</title>
+</head>
+<body>
+    <h2>Dear {{ nominee.name }},</h2>
+    <p>
+        This is to inform you that {{ user.username }} has not logged into their LifeVault account 
+        for more than {{ timeout_str }}.
+    </p>
+    
+    {% if documents %}
+    <h3>Attached Documents:</h3>
+    <ul>
+        {% for doc in documents %}
+        <li>{{ doc.name }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    
+    {% if vault_items %}
+    <h3>Assigned Vault Items:</h3>
+    <ul>
+        {% for item in vault_items %}
+        <li>{{ item.name }} ({{ item.get_item_type_display }})</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    
+    <p>
+        Please log in to your LifeVault account to access the vault items.
+    </p>
+    <p>Sincerely,<br>The LifeVault Team</p>
+</body>
+</html>
