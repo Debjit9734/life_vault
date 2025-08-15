@@ -20,7 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('Vault/', include('Vault.urls')),  # Include the Vault app's URLs
+    path('', include('Vault.urls')),  # Include the Vault app's URLs
     path('admin/', admin.site.urls),
 ]
 
